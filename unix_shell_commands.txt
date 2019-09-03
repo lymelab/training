@@ -1,0 +1,135 @@
+# Some basic unix (mac/linux) terminal commands
+
+# The Unix Shell
+Built around read-evaluate-print loops. Everything is represented as text in the command line, easy to keep, repeatable records of what you are doing. GUI (Graphical User Interface) are designed for specific tasks, the command line is suited for flexible, small tasks that can be strung together to perform many different things.
+
+# Definitions
+Root directory -- top level directory
+Flags -- arguments that are added to commands that modify the behavior of the command
+
+# Basic commands -- file system navigation
+whoami : prints who you are logged in as
+pwd : print working directory
+/ : the root directory
+~ : home directory
+ls : lists files and folders
+ls -t : list files ordered by time created or modified
+ls -R : recursive ls
+cd : change directory
+cd my_folder : change to my_folder directory
+ls -F : list files and folders and display a slash '/' for folders
+cd .. : move up one folder
+cd . : the current directory -- can use to specify the current path in a command
+tab : auto complete (aka your very best friend)
+arrow keys : moe through the commands you have typed and completed
+man command : open the manual of the command 'command'
+wc file.txt : word count of file (word count, line count, character count)
+cat : 'concatenate' prints a file to screen
+tac : prints file to screen in opposite direction
+head -n2 file.txt : print first two lines of file.txt
+tail -n2 file.txt : print the last two lines of file.txt
+echo : prints to screen (e.g., echo hello), useful in bash scripts and if you want to append text to file
+clear : clear the current terminal screen
+
+# Wild cards
+* : matches everything
+? : matches a single character
+ls *[AB].txt : matches test files that end with either A or B
+
+# Creating new files
+mkdir : make new directory (folder)
+nano : basic command line text editory (^ is CTRL)
+rm : remove file (permanently!! be careful)
+rmdir : remove directory (or rm -r) again, permanent so use with caution
+mv : move file/folder or rename 
+cp : copy file
+cp file1.txt file2.txt ~ : copies both file1 and file2 to your home directory
+
+# Pipes -- take output of one command as input for another
+> : output redirection (nothing printed to screen)
+| : pipe output of one command to a secondary command
+< : input redirection
+>> : append to file
+echo :print to screen/use as input for a command
+
+# Sorting
+sort : sort a file alphabetically
+sort -n : sort file numerically
+sort -r : sort file (reverse)
+uniq : find uniq lines in a file -- needs to be sorted first (e.g., cat file.txt | sort | uniq)
+
+# Loops and bash
+for loop examples: #you can nest for loops together, be sure to use different variable names for each loop
+for filename in basilisk.dat unicorn.dat ; do head -3 $filename; done
+for line in basilisk.dat unicorn.dat; do cp $line $line.original; done
+for filename in *.dat; do echo $filename; done 
+for filename in *.dat ; do  echo $filename; head -n 100 $filename | tail -20; done
+for file in *[AB].txt; do echo $file; done
+bash goostats NENE01971Z.txt stats-Z.txt (takes two arguments, input file and output file )
+for datafile in *[AB].txt; do echo $datafile; bash goostats $datafile stats-$datafile; done
+for filename in *.dat; do echo mv $filename temp; done
+for datafile in *[AB].txt; do echo $datafile stats$datafile; done
+for line in `cat NENE01729A.txt`; do echo $line; done -- bash ticks (`) use output of the command (here cat NENE01729A.txt) as input to loop
+in middle.sh type: head -15 "$1" | tail -5
+in command line : bash middle.sh octane.pdb
+in middle.sh type: head "$2" "$1" | tail "$3"
+in command line type: bash middle.sh octane.pdb -20 -5 
+# are for comments
+
+# Shortcuts
+CTRL+a : move cursor to beginning of line
+CTRL+e : move cursor to end of line
+history : list of last 500 commands 
+history | tail -10 : last 10 commands
+
+# Create bash file (shell script)
+head -15 octane.pdb | tail -5 : look at the last five lines of the first 15
+#print history to middle.sh, open in nano and edit
+history | tail -5 > middle.sh
+
+#so it should look like this
+cat middle.sh 
+head -15 octane.pdb | tail -5
+
+#run like so
+bash middle.sh
+
+#adding shell variable ($1 = first argument after command) -- good idea to "quote" variables in bash, protect you in case file names contain special characters ("" = look for exactly this)
+cat middle.sh 
+head -15 "$1" | tail -5
+
+#run like so
+bash middle.sh octane.pdb
+
+#add additional variables
+cat middle.sh 
+head "$2" "$1" | tail "$3
+#run (need to pass three arguments)
+bash middle.sh pentane.pdb -20 -5
+
+# -- comment out line
+
+#shell argument $@ takes in all arguments passed to the script
+wc -l "$@" | sort -n 
+bash sorted.sh *.pdb 
+# @ includes all arguments
+
+
+# calculate stats for data files (do-stats.sh)
+for datafile in "$@"
+do
+    echo "$datafile"
+    bash goostats -J 100 -r $datafile stats-$datafile
+done
+
+
+#search for pattern ("not" in example) in file with grep command
+grep not haiku.txt
+ grep -r not * #recursive grep for "not" in all files in the current directory
+#grep  looks inside the file itself while find does not
+
+#find command takes several arguments: find path type_of_search thing_to_search_for
+find ./ -name haiku.txt
+#find all text files
+find ./ -name "*.txt"
+find *.txt  # looks only in the current directory 

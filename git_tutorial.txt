@@ -97,5 +97,21 @@ git revert <hash-or-ref>
 cat count_bases.py
 python3 count_bases.py iodamoeba_rep.fa
 
+#pipe output of command to a new text file
+python3 count_bases.py iodamoeba_rep.fa > count_results.txt
+
 #check differences in file online
+
+#other fun command line tricks
+#transform newline characters to tab characters
+cat count_results.txt | tr "\n" "\t"
+
+#what if we only care about the number of G's and C's in our file?
+grep -E "Number of G's|Number of C's" count_results.txt
+
+#what's the smallest count of G's in our file?
+grep "Number of G's" count_results.txt | awk -F": " '{print $2}' | sort -nr
+
+#which sequence has the highest count of G bases?
+grep "Number.*G.*65" count_results.txt -B 10
 
